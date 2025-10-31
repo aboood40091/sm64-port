@@ -389,10 +389,10 @@ index f56ed02..2b682ed 100644
  
  // bss order hack to not affect BSS order. if possible, remove me, but it will be hard to match otherwise
 diff --git a/src/game/envfx_bubbles.c b/src/game/envfx_bubbles.c
-index 9bc0e6e..721ce96 100644
+index 9bc0e6e..b1f6095 100644
 --- a/src/game/envfx_bubbles.c
 +++ b/src/game/envfx_bubbles.c
-@@ -35,6 +35,20 @@ Vtx_t gBubbleTempVtx[3] = {
+@@ -35,6 +35,22 @@ Vtx_t gBubbleTempVtx[3] = {
      { { 0, 0, 0 }, 0, { -498, 964 }, { 0xFF, 0xFF, 0xFF, 0xFF } },
  };
  
@@ -410,10 +410,12 @@ index 9bc0e6e..721ce96 100644
 +    }
 +}
 +
++extern void interpolate_vectors_s16(Vec3s res, Vec3s a, Vec3s b);
++
  /**
   * Check whether the particle with the given index is
   * laterally within distance of point (x, z). Used to
-@@ -241,6 +255,7 @@ void envfx_update_whirlpool(void) {
+@@ -241,6 +257,7 @@ void envfx_update_whirlpool(void) {
              (gEnvFxBuffer + i)->yPos = (i + gEnvFxBuffer)->bubbleY;
              (gEnvFxBuffer + i)->unusedBubbleVar = 0;
              (gEnvFxBuffer + i)->isAlive = 1;
@@ -421,7 +423,7 @@ index 9bc0e6e..721ce96 100644
  
              envfx_rotate_around_whirlpool(&(gEnvFxBuffer + i)->xPos, &(gEnvFxBuffer + i)->yPos,
                                            &(gEnvFxBuffer + i)->zPos);
-@@ -299,6 +314,7 @@ void envfx_update_jetstream(void) {
+@@ -299,6 +316,7 @@ void envfx_update_jetstream(void) {
                  + coss((gEnvFxBuffer + i)->angleAndDist[0]) * (gEnvFxBuffer + i)->angleAndDist[1];
              (gEnvFxBuffer + i)->yPos =
                  gEnvFxBubbleConfig[ENVFX_STATE_SRC_Y] + (random_float() * 400.0f - 200.0f);
@@ -429,7 +431,7 @@ index 9bc0e6e..721ce96 100644
          } else {
              (gEnvFxBuffer + i)->angleAndDist[1] += 10;
              (gEnvFxBuffer + i)->xPos += sins((gEnvFxBuffer + i)->angleAndDist[0]) * 10.0f;
-@@ -472,6 +488,12 @@ Gfx *envfx_update_bubble_particles(s32 mode, UNUSED Vec3s marioPos, Vec3s camFro
+@@ -472,6 +490,12 @@ Gfx *envfx_update_bubble_particles(s32 mode, UNUSED Vec3s marioPos, Vec3s camFro
      Vec3s vertex1;
      Vec3s vertex2;
      Vec3s vertex3;
@@ -442,7 +444,7 @@ index 9bc0e6e..721ce96 100644
  
      Gfx *gfxStart;
  
-@@ -487,18 +509,52 @@ Gfx *envfx_update_bubble_particles(s32 mode, UNUSED Vec3s marioPos, Vec3s camFro
+@@ -487,18 +511,52 @@ Gfx *envfx_update_bubble_particles(s32 mode, UNUSED Vec3s marioPos, Vec3s camFro
      envfx_bubbles_update_switch(mode, camTo, vertex1, vertex2, vertex3);
      rotate_triangle_vertices(vertex1, vertex2, vertex3, pitch, yaw);
  
@@ -1882,7 +1884,7 @@ index b9fa99b..e85bac4 100644
      switch (transType) {
          case WARP_TRANSITION_FADE_FROM_COLOR:
 diff --git a/src/menu/intro_geo.c b/src/menu/intro_geo.c
-index 48d53f8..98c578e 100644
+index 48d53f8..9def1e1 100644
 --- a/src/menu/intro_geo.c
 +++ b/src/menu/intro_geo.c
 @@ -1,5 +1,6 @@
@@ -1892,7 +1894,7 @@ index 48d53f8..98c578e 100644
  #include "game/memory.h"
  #include "game/segment2.h"
  #include "game/segment7.h"
-@@ -36,6 +37,18 @@ static s32 sGameOverTableIndex;
+@@ -36,6 +37,20 @@ static s32 sGameOverTableIndex;
  static s16 sIntroFrameCounter;
  static s32 sTmCopyrightAlpha;
  
@@ -1908,10 +1910,12 @@ index 48d53f8..98c578e 100644
 +    }
 +}
 +
++extern void interpolate_vectors(Vec3f res, Vec3f a, Vec3f b);
++
  /**
   * Geo callback to render the "Super Mario 64" logo on the title screen
   */
-@@ -49,6 +62,8 @@ Gfx *geo_intro_super_mario_64_logo(s32 state, struct GraphNode *node, UNUSED voi
+@@ -49,6 +64,8 @@ Gfx *geo_intro_super_mario_64_logo(s32 state, struct GraphNode *node, UNUSED voi
      f32 scaleX;
      f32 scaleY;
      f32 scaleZ;
@@ -1920,7 +1924,7 @@ index 48d53f8..98c578e 100644
  
      if (state != 1) {
          sIntroFrameCounter = 0;
-@@ -80,7 +95,12 @@ Gfx *geo_intro_super_mario_64_logo(s32 state, struct GraphNode *node, UNUSED voi
+@@ -80,7 +97,12 @@ Gfx *geo_intro_super_mario_64_logo(s32 state, struct GraphNode *node, UNUSED voi
              scaleY = 0.0f;
              scaleZ = 0.0f;
          }
@@ -1969,10 +1973,10 @@ index 9d2743e..a0cb218 100644
  
  const struct {
 diff --git a/src/pc/gfx/gfx_gx2_window.cpp b/src/pc/gfx/gfx_gx2_window.cpp
-index 0c719dc..7db7684 100644
+index abe26c8..f9f2106 100644
 --- a/src/pc/gfx/gfx_gx2_window.cpp
 +++ b/src/pc/gfx/gfx_gx2_window.cpp
-@@ -380,7 +380,7 @@ static void gfx_gx2_window_init(UNUSED const char*, UNUSED bool)
+@@ -371,7 +371,7 @@ static void gfx_gx2_window_init(UNUSED const char*, UNUSED bool)
  
      // Set swap interval to 2 by default
      // (Set it to 1 when using the 60FPS patch)
