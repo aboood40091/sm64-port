@@ -5,8 +5,6 @@
 #include <math.h>
 #include <string.h>
 
-#include <ultra64.h>
-
 #include <vpad/input.h>
 #include <padscore/wpad.h>
 #include <padscore/kpad.h>
@@ -129,8 +127,8 @@ static void read_wpad(OSContPad* pad) {
     bool gamepadStickNotSet = pad->stick_x == 0 && pad->stick_y == 0;
 
     if (status.extensionType == WPAD_EXT_NUNCHUK || status.extensionType == WPAD_EXT_MPLUS_NUNCHUK) {
-        uint32_t ext = status.nunchuck.hold;
-        stick = status.nunchuck.stick;
+        uint32_t ext = status.nunchuk.hold;
+        stick = status.nunchuk.stick;
 
         if (wm & WPAD_BUTTON_A) pad->button |= A_BUTTON;
         if (wm & WPAD_BUTTON_B) pad->button |= B_BUTTON;

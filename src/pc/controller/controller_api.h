@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_API
 #define CONTROLLER_API
 
-#include <ultra64.h>
+#include <PR/os_cont.h>
 
 struct ControllerAPI {
     void (*init)(void);
